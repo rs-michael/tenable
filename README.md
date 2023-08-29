@@ -1,6 +1,6 @@
 # Vulnerability JIRA Integration
 
-The script fetches vulneribility data from Tenable and creates Jira Issues from them
+The script fetches vulnerability data from Tenable and creates Jira Issues from them
 
 ## Installation
 
