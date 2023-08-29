@@ -1,6 +1,6 @@
 # Vulnerability JIRA Integration
 
-Foobar is a Python library for dealing with word pluralization.
+The script fetches vulneribility data from Tenable and creates Jira Issues from them
 
 ## Installation
 
@@ -27,6 +27,7 @@ Before running the python script ```python src/main.py```, variables and secrets
 ```
 
 ***The following files need to be setup prior to running the script***
+
 **(1) .env file - create one in root dir**
 ```
 tenable_access_key = ""
