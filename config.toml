@@ -1,0 +1,3 @@
+[jira]
+    key = "YOUR_PROJECT_KEY"
+    url = "https://YOUR_DOMAIN.atlassian.net"
