@@ -26,14 +26,16 @@ Before running the python script ```python src/main.py```, variables and secrets
 └── .gitignore
 ```
 
-***The following files need setup prior to running the script***
-
+***The following files need to be setup prior to running the script***
+**(1) .env file - create one in root dir**
 ```
 tenable_access_key = ""
 tenable_secret_key = ""
 jira_token = "" (Your JIRA API token)
 jira_email = "" (Email for JIRA account that admintered the token and has Admin privileges)
-```
+ ```
+
+**(1) config.toml file**
 ```
 [jira]
     key = "YOUR_PROJECT_KEY"
