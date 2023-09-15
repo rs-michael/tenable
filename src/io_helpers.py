@@ -12,10 +12,12 @@ def write_file(data: dict) -> None:
         json.dump(data, file, indent=4)
 
 
-def read_file() -> Optional[dict]:
+def read_file(path: str = None) -> Optional[dict]:
     """Read the file"""
+    if path is None:
+        path = "data/vulnerabilities.json"
     try:
-        with open("data/vulnerabilities.json", "r", encoding="utf-8") as file:
+        with open(path, "r", encoding="utf-8") as file:
             return json.load(file)
     except FileNotFoundError:
         return {"vulnerabilities": []}

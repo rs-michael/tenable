@@ -70,13 +70,14 @@ def process_vulnerabilities(client, issues_to_open, issues_to_close) -> None:
                 epic_id = issues_cache[epic_name]
             else:
                 epic_id = create_issue(client, epic_name, "Task")
-            if not check_issue_exists(client, issue_name, "Subtask"):
-                description = get_description(plugin_id)
-                issue_id = create_issue(client, issue_name, "Subtask", description, epic_id)
-                transition_issue(client, issue_id, "In Progress")
-            else:
-                # This should never get here as plugin_names are unique
-                pass
+                transition_issue(client, epic_id, "In Progress")
+        if not check_issue_exists(client, issue_name, "Subtask"):
+            description = get_description(plugin_id)
+            issue_id = create_issue(client, issue_name, "Subtask", description, epic_id)
+            transition_issue(client, issue_id, "In Progress")
+        else:
+            # This should never get here as plugin_names are unique
+            pass
 
     for each in issues_to_close:
         issue_name = each["plugin_name"]
@@ -138,15 +139,17 @@ def check_parent_needs_closing(client: JIRA) -> None:
 
     results = client.search_issues(jql_str=jql_str, fields=["summary", "status", "subtasks"], json_result=True)
     for task in results["issues"]:
-        subtask_stats = []
+        subtask_status = []
         task_key = task["key"]
         for subtask in task["fields"]["subtasks"]:
             status = subtask["fields"]["status"]["name"]
-            subtask_stats.append(status)
+            subtask_status.append(status)
 
-        done = len(set(subtask_stats)) == 1 and subtask_stats[0] == "Done"
+        done = len(set(subtask_status)) == 1 and subtask_status[0] == "Done"
         if done:
             transition_issue(client, task_key, "Done")
+        else:
+            transition_issue(client, task_key, "In Progress")
 
 
 def get_vulnerabilities() -> dict:
@@ -182,18 +185,21 @@ def main() -> None:
 
     # Fetch vulnerabilities
     if new_vulns := get_vulnerabilities():
-        pass
+    # if new_vulns := read_file("data/first_call.json"):
+    # if new_vulns := read_file("data/second_call.json"):
+    # if new_vulns := read_file("data/third_call.json"):
+    # if new_vulns := read_file("data/fourth_call.json"):
+        old_vulns = read_file()
+        issues_to_open, issues_to_close = compare_files(new_vulns, old_vulns)
+        if not issues_to_open and not issues_to_close:
+            print("No new issues")
+            return
+        process_vulnerabilities(client, issues_to_open, issues_to_close)
+        write_file(new_vulns)
     else:
         print("Could not pull vulnerabilities from Tenable")
         return
 
-    old_vulns = read_file()
-    issues_to_open, issues_to_close = compare_files(new_vulns, old_vulns)
-    if not issues_to_open and not issues_to_close:
-        print("No new issues")
-        return
-    process_vulnerabilities(client, issues_to_open[0:1], issues_to_close)
-    write_file(new_vulns)
 
 
 if __name__ == "__main__":
